@@ -14,6 +14,12 @@
   --glass: rgba(255, 255, 255, 0.11);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1370,7 +1376,9 @@ footer img {
     position: relative;
     right: auto;
     bottom: auto;
-    margin-top: 18px;
+    width: min(280px, 100%);
+    margin: 18px auto 0 0;
+    padding: 20px;
   }
 
   .place-section,
@@ -1446,6 +1454,21 @@ footer img {
   }
 }
 
+@media (min-width: 561px) and (max-width: 980px) {
+  .place-section,
+  .access-section,
+  .menu-layout,
+  .experience-panel {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .access-grid,
+  .gallery-grid,
+  .infos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 560px) {
   .nav {
     min-height: 62px;
@@ -1473,16 +1496,94 @@ footer img {
     width: 100%;
   }
 
+  .place-section {
+    padding: 96px 18px 64px;
+    background-size: auto, auto, 150vw auto, auto;
+  }
+
+  .place-copy {
+    max-width: none;
+  }
+
+  .place-copy h2,
+  .gallery-intro h2,
+  .section-heading h2,
+  .access-section h2,
+  .experience-content h2 {
+    font-size: clamp(32px, 11vw, 48px);
+    line-height: 0.96;
+  }
+
+  .place-copy > p:not(.eyebrow),
+  .access-section > div > p,
+  .experience-content > p:not(.eyebrow) {
+    font-size: 13px;
+    line-height: 1.48;
+  }
+
+  .place-highlights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 22px;
+  }
+
   .plate-strip {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .place-highlights article {
-    grid-template-columns: 1fr;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 4px 8px;
   }
 
   .place-highlights p {
-    grid-column: auto;
+    grid-column: 2;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .place-highlights h3 {
+    font-size: 13px;
+  }
+
+  .place-highlights svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .access-section {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 16px;
+    align-items: start;
+    padding-inline: 18px;
+  }
+
+  .access-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .access-grid article {
+    padding: 14px;
+  }
+
+  .access-grid h3 {
+    font-size: 13px;
+  }
+
+  .access-grid p {
+    font-size: 11px;
+    line-height: 1.38;
+  }
+
+  .menu-layout {
+    grid-template-columns: minmax(102px, 0.34fr) minmax(0, 0.66fr);
+    gap: 12px;
+  }
+
+  .plate-strip img {
+    border-radius: 14px;
   }
 
   .plate-strip img:nth-child(2),
@@ -1500,8 +1601,25 @@ footer img {
     flex-basis: auto;
   }
 
+  .experience-panel {
+    grid-template-columns: minmax(112px, 0.38fr) minmax(0, 0.62fr);
+    gap: 14px;
+  }
+
   .experience-media {
-    min-height: 340px;
+    min-height: 260px;
+  }
+
+  .experience-media div {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    padding-top: 12px;
+  }
+
+  .experience-media p {
+    font-size: 11px;
+    line-height: 1.35;
   }
 
   .experience-link {
@@ -1518,8 +1636,22 @@ footer img {
     padding: 24px;
   }
 
+  .infos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .info-card {
     min-height: auto;
+    padding: 16px;
+  }
+
+  .info-card h3 {
+    font-size: 14px;
+  }
+
+  .info-card p,
+  .info-card a {
+    font-size: 12px;
   }
 
   .double-carousel {

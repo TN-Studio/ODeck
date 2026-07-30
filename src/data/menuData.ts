@@ -214,6 +214,8 @@ export const DEFAULT_MENU: MenuSection[] = [
 ];
 
 const STORAGE_KEY = 'odeck-menu-v6';
+const CONTENT_API = '/.netlify/functions/site-content';
+const CONTENT_KEY = 'menu';
 
 function normalizeMenu(menu: MenuSection[]): MenuSection[] {
   const normalized = menu.map((section) => ({
@@ -239,7 +241,41 @@ export function loadMenu(): MenuSection[] {
   }
 }
 
-export function saveMenu(menu: MenuSection[]) {
+export async function loadRemoteMenu(): Promise<MenuSection[] | null> {
+  try {
+    const response = await fetch(`${CONTENT_API}?key=${CONTENT_KEY}`);
+    if (!response.ok) return null;
+
+    const payload = await response.json() as { ok?: boolean; data?: MenuSection[] | null };
+    if (!payload.ok || !Array.isArray(payload.data)) return null;
+
+    const menu = normalizeMenu(payload.data);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(menu));
+    window.dispatchEvent(new CustomEvent('menu-updated', { detail: menu }));
+    return menu;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveMenu(menu: MenuSection[], adminPassword?: string): Promise<'online' | 'local'> {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(menu));
   window.dispatchEvent(new CustomEvent('menu-updated', { detail: menu }));
+
+  if (!adminPassword) return 'local';
+
+  try {
+    const response = await fetch(CONTENT_API, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Password': adminPassword,
+      },
+      body: JSON.stringify({ key: CONTENT_KEY, data: menu }),
+    });
+    const payload = await response.json() as { ok?: boolean };
+    return response.ok && payload.ok ? 'online' : 'local';
+  } catch {
+    return 'local';
+  }
 }

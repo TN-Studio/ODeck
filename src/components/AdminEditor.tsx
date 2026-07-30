@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react';
-import { loadMenu, saveMenu, type MenuItem, type MenuSection } from '../data/menuData';
+import { loadMenu, loadRemoteMenu, saveMenu, type MenuItem, type MenuSection } from '../data/menuData';
 
 const normalize = (value: string) =>
   value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '');
@@ -14,6 +14,14 @@ export default function AdminEditor({ onExit }: { onExit: () => void }) {
   const [status, setStatus] = useState('');
 
   const current = menu[active] ?? menu[0];
+
+  useEffect(() => {
+    if (!unlocked) return;
+
+    void loadRemoteMenu().then((remoteMenu) => {
+      if (remoteMenu) setMenu(remoteMenu);
+    });
+  }, [unlocked]);
 
   const unlock = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,9 +69,9 @@ export default function AdminEditor({ onExit }: { onExit: () => void }) {
   const addItem = () => updateSection({ items: [...current.items, { name: 'Nouveau plat', desc: '', price: '' }] });
   const removeItem = (itemIndex: number) => updateSection({ items: current.items.filter((_, index) => index !== itemIndex) });
 
-  const save = () => {
-    saveMenu(menu);
-    setStatus('Carte enregistrée');
+  const save = async () => {
+    const mode = await saveMenu(menu, code);
+    setStatus(mode === 'online' ? 'Carte enregistrée en ligne' : 'Carte enregistrée sur cet appareil');
   };
 
   if (!unlocked) {

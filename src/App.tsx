@@ -22,7 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import AdminEditor from './components/AdminEditor';
-import { loadMenu, type MenuSection } from './data/menuData';
+import { loadMenu, loadRemoteMenu, type MenuSection } from './data/menuData';
 import './App.css';
 
 const logo = '/odeck/logo-odeck.svg';
@@ -289,6 +289,10 @@ function MenuCardSection({
   images: string[];
 }) {
   const [menu, setMenu] = useState<MenuSection[]>(() => loadMenu());
+
+  useEffect(() => {
+    void loadRemoteMenu();
+  }, []);
   const [active, setActive] = useState(() => menu.find((section) => (section.group ?? 'food') === group)?.id ?? '');
 
   useEffect(() => {
